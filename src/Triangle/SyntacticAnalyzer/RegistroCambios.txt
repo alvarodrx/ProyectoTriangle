@@ -1,0 +1,14 @@
+Registro de cambios hechos:
+
+En la clase TOKEN:
+	- Agregadas nuevas palabras reservadas y simbolos ".." = DOTDOT y "|" = PIPE
+	- Agregadas a la tokenTable tambien
+
+En la clase SCANNER:
+	- Metodo scanToken():
+		- DOTDOT
+
+En la clase PARSER:
+	- Metodo parseProgram -> agregado NIL
+	- Metodo parseSingleCommand:
+		- case Token.EOT -> Token.NIL
