@@ -280,25 +280,39 @@ public class Parser {
 				}
 			}
 			break;
-			
-                        //Eliminar esto.
-			
+				
 			case Token.LET: {
 				acceptIt();
 				Declaration dAST = parseDeclaration();
 				accept(Token.IN);
-				Command cAST = parseSingleCommand();
-                                accept(Token.END);
+				Command cAST = parseCommand();
+				accept(Token.END);
 				finish(commandPos);
-                         	commandAST = new LetCommand(dAST, cAST, commandPos);
-                        }                        
+				commandAST = new LetCommand(dAST, cAST, commandPos);
+			}
 			break;
-			                
 			
-                        
+			case Token.REPEAT: {
+				acceptIt();
+				switch (currentToken.kind) {
+					case Token.WHILE: {
+						acceptIt();
+						Expression eAST = parseExpression();
+						accept(Token.DO);
+						Command cAST = parseSingleCommand();
+						accept(Token.END);
+						finish(commandPos);
+						commandAST = new WhileCommand(eAST, cAST, commandPos);
+					}
+					break;
+				}
+			}
+			break;
+				
+			
 
 			case Token.SEMICOLON: // Estas cosas no van a suceder
-			case Token.END:       // ... 
+			case Token.END:       // ...
 			case Token.ELSE:      // ...
 			case Token.IN:        // ...
 			//case Token.EOT:       // ...  Cambiar por nill
@@ -317,6 +331,8 @@ public class Parser {
 
 		return commandAST;
 	}
+	
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //
