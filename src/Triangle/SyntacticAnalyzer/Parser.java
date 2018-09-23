@@ -281,18 +281,39 @@ public class Parser {
 			}
 			break;
 			
-                        //Eliminar esto.
-			
+                        //Nuevo 			
 			case Token.LET: {
 				acceptIt();
 				Declaration dAST = parseDeclaration();
 				accept(Token.IN);
-				Command cAST = parseSingleCommand();
+				Command cAST = parseCommand();
                                 accept(Token.END);
 				finish(commandPos);
                          	commandAST = new LetCommand(dAST, cAST, commandPos);
                         }                        
 			break;
+                        
+            case Token.IF:{
+                acceptIt();
+                Expression eAST = parseExpression();
+                accept(Token.THEN);
+	            Command cAST = parseCommand();                
+                while(currentToken.kind == Token.ELSIF)
+                {
+                    acceptIt();
+                    Expression e1AST = parseExpression();
+                    accept(Token.THEN);
+                    Command c1AST = parseCommand(); 
+                    finish(commandPos);
+                    commandAST = new IfCommand(e1AST, c1AST, commandAST, null, commandPos);
+                }                
+                accept(Token.ELSE);	
+                Command c2AST = parseCommand();
+	            finish(commandPos);
+                accept(Token.END);
+                commandAST = new IfCommand(eAST, cAST, commandAST, c2AST, commandPos);         
+            
+            }
 			                
 			
                         
