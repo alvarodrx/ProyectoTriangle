@@ -281,44 +281,21 @@ public class Parser {
 			}
 			break;
 			
-
-			case Token.BEGIN:
-				acceptIt();
-				commandAST = parseCommand();
-				accept(Token.END);
-				break;
-
+                        //Eliminar esto.
+			
 			case Token.LET: {
 				acceptIt();
 				Declaration dAST = parseDeclaration();
 				accept(Token.IN);
 				Command cAST = parseSingleCommand();
+                                accept(Token.END);
 				finish(commandPos);
-				commandAST = new LetCommand(dAST, cAST, commandPos);
-			}
+                         	commandAST = new LetCommand(dAST, cAST, commandPos);
+                        }                        
 			break;
-
-			case Token.IF: {
-				acceptIt();
-				Expression eAST = parseExpression();
-				accept(Token.THEN);
-				Command c1AST = parseSingleCommand();
-				accept(Token.ELSE);
-				Command c2AST = parseSingleCommand();
-				finish(commandPos);
-				commandAST = new IfCommand(eAST, c1AST, c2AST, commandPos);
-			}
-			break;
-
-			case Token.WHILE: {
-				acceptIt();
-				Expression eAST = parseExpression();
-				accept(Token.DO);
-				Command cAST = parseSingleCommand();
-				finish(commandPos);
-				commandAST = new WhileCommand(eAST, cAST, commandPos);
-			}
-			break;
+			                
+			
+                        
 
 			case Token.SEMICOLON: // Estas cosas no van a suceder
 			case Token.END:       // ... 
