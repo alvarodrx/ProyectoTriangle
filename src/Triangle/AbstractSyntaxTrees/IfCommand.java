@@ -18,12 +18,13 @@ import Triangle.SyntacticAnalyzer.SourcePosition;
 
 public class IfCommand extends Command {
 
-  public IfCommand (Expression eAST, Command c1AST, Command c2AST,
+  public IfCommand (Expression eAST, Command c1AST, Command c2AST,Command c3AST,
                     SourcePosition thePosition) {
     super (thePosition);
     E = eAST;
     C1 = c1AST;
     C2 = c2AST;
+    C3 =  c3AST;
   }
 
   public Object visit(Visitor v, Object o) {
@@ -31,5 +32,5 @@ public class IfCommand extends Command {
   }
 
   public Expression E;
-  public Command C1, C2;
+  public Command C1, C2, C3;
 }
