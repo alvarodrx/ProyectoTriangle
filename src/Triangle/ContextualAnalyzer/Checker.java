@@ -129,6 +129,7 @@ public final class Checker implements Visitor {
       reporter.reportError("Boolean expression expected here", "", ast.E.position);
     ast.C1.visit(this, null);
     ast.C2.visit(this, null);
+    ast.C3.visit(this, null);
     return null;
   }
 
