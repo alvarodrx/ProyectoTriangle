@@ -20,8 +20,10 @@ import Triangle.AbstractSyntaxTrees.CharacterLiteral;
 import Triangle.AbstractSyntaxTrees.ConstActualParameter;
 import Triangle.AbstractSyntaxTrees.ConstDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstFormalParameter;
+import Triangle.AbstractSyntaxTrees.DoUntilCommand;
 import Triangle.AbstractSyntaxTrees.DoWhileCommand;
 import Triangle.AbstractSyntaxTrees.DotVname;
+import Triangle.AbstractSyntaxTrees.ElsifCommand;
 import Triangle.AbstractSyntaxTrees.EmptyActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.EmptyCommand;
 import Triangle.AbstractSyntaxTrees.EmptyExpression;
@@ -51,6 +53,7 @@ import Triangle.AbstractSyntaxTrees.Program;
 import Triangle.AbstractSyntaxTrees.RecordExpression;
 import Triangle.AbstractSyntaxTrees.RecordTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
+import Triangle.AbstractSyntaxTrees.SequentialElsifCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SimpleVname;
@@ -63,6 +66,7 @@ import Triangle.AbstractSyntaxTrees.SubscriptVname;
 import Triangle.AbstractSyntaxTrees.TypeDeclaration;
 import Triangle.AbstractSyntaxTrees.UnaryExpression;
 import Triangle.AbstractSyntaxTrees.UnaryOperatorDeclaration;
+import Triangle.AbstractSyntaxTrees.UntilCommand;
 import Triangle.AbstractSyntaxTrees.VarActualParameter;
 import Triangle.AbstractSyntaxTrees.VarDeclaration;
 import Triangle.AbstractSyntaxTrees.VarFormalParameter;
@@ -113,11 +117,16 @@ public class TableVisitor implements Visitor {
       return(null);
   }
   
+  public Object visitElsifCommand(ElsifCommand ast, Object o) { 
+      ast.E.visit(this, null);
+      ast.C.visit(this, null);
+      return(null);
+  }
+  
   public Object visitIfCommand(IfCommand ast, Object o) { 
       ast.E.visit(this, null);
       ast.C1.visit(this, null);
       ast.C2.visit(this, null);
-      
       return(null);
   }
   
@@ -135,7 +144,21 @@ public class TableVisitor implements Visitor {
       return(null);
   }
   
+  public Object visitSequentialElsifCommand(SequentialElsifCommand ast, Object o) { 
+      ast.C1.visit(this, null);
+      ast.C2.visit(this, null);
+      
+      return(null);
+  }
+  
   public Object visitWhileCommand(WhileCommand ast, Object o) { 
+      ast.E.visit(this, null);
+      ast.C.visit(this, null);
+      
+      return(null);
+  }
+  
+    public Object visitUntilCommand(UntilCommand ast, Object o) { 
       ast.E.visit(this, null);
       ast.C.visit(this, null);
       
@@ -148,6 +171,14 @@ public class TableVisitor implements Visitor {
       
       return(null);
   }
+  
+  public Object visitDoUntilCommand(DoUntilCommand ast, Object o) { 
+      ast.E.visit(this, null);
+      ast.C.visit(this, null);
+      
+      return(null);
+  }
+  
   // </editor-fold>
 
   // <editor-fold defaultstate="collapsed" desc=" Expressions ">

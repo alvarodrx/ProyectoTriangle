@@ -9,6 +9,13 @@ En la clase SCANNER:
 		- DOTDOT
 
 En la clase PARSER:
+        - Eliminacion de: 
+                   - Token.BEGIN
+                   - Token.IF
+                   - Token.WHILE
+                   - Token.LET
 	- Metodo parseProgram -> agregado NIL
 	- Metodo parseSingleCommand:
 		- case Token.EOT -> Token.NIL
+                - case Token.LET
+                - case Token.IF
