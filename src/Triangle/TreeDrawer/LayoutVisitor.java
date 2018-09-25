@@ -51,6 +51,7 @@ import Triangle.AbstractSyntaxTrees.IntegerExpression;
 import Triangle.AbstractSyntaxTrees.IntegerLiteral;
 import Triangle.AbstractSyntaxTrees.LetCommand;
 import Triangle.AbstractSyntaxTrees.LetExpression;
+import Triangle.AbstractSyntaxTrees.LocalCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.MultipleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleArrayAggregate;
 import Triangle.AbstractSyntaxTrees.MultipleFieldTypeDenoter;
@@ -63,9 +64,11 @@ import Triangle.AbstractSyntaxTrees.ProcFormalParameter;
 import Triangle.AbstractSyntaxTrees.Program;
 import Triangle.AbstractSyntaxTrees.RecordExpression;
 import Triangle.AbstractSyntaxTrees.RecordTypeDenoter;
+import Triangle.AbstractSyntaxTrees.RecursiveCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.SequentialElsifCommand;
+import Triangle.AbstractSyntaxTrees.SequentialProcFunc;
 import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
@@ -206,6 +209,21 @@ public class LayoutVisitor implements Visitor {
 	public Object visitProcDeclaration(ProcDeclaration ast, Object obj) {
 		return layoutTernary("ProcDecl.", ast.I, ast.FPS, ast.C);
 	}
+    
+    @Override
+    public Object visitSequentialProcFunc(SequentialProcFunc ast, Object o) {
+        return layoutBinary("Seq.ProcFunc.", ast.D1, ast.D2);
+    }
+
+    @Override
+    public Object visitRecursieCompDeclaration(RecursiveCompoundDeclaration ast, Object o) {
+        return layoutUnary("RecurDec.", ast.SPF);
+    }
+    
+     @Override
+    public Object visitLocalCompoundDeclaration(LocalCompoundDeclaration ast, Object o) {
+       return layoutBinary("LocalDec", ast.D1, ast.D2);
+    }
 
 	public Object visitSequentialDeclaration(SequentialDeclaration ast, Object obj) {
 		return layoutBinary("Seq.Decl.", ast.D1, ast.D2);
@@ -553,5 +571,9 @@ public class LayoutVisitor implements Visitor {
 
 		return r;
 	}
+
+   
+
+
 
 }

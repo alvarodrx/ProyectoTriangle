@@ -51,6 +51,7 @@ import Triangle.AbstractSyntaxTrees.IntegerExpression;
 import Triangle.AbstractSyntaxTrees.IntegerLiteral;
 import Triangle.AbstractSyntaxTrees.LetCommand;
 import Triangle.AbstractSyntaxTrees.LetExpression;
+import Triangle.AbstractSyntaxTrees.LocalCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.MultipleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleArrayAggregate;
 import Triangle.AbstractSyntaxTrees.MultipleFieldTypeDenoter;
@@ -64,9 +65,11 @@ import Triangle.AbstractSyntaxTrees.Program;
 import Triangle.AbstractSyntaxTrees.RecordAggregate;
 import Triangle.AbstractSyntaxTrees.RecordExpression;
 import Triangle.AbstractSyntaxTrees.RecordTypeDenoter;
+import Triangle.AbstractSyntaxTrees.RecursiveCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.SequentialElsifCommand;
+import Triangle.AbstractSyntaxTrees.SequentialProcFunc;
 import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
@@ -85,6 +88,7 @@ import Triangle.AbstractSyntaxTrees.VarFormalParameter;
 import Triangle.AbstractSyntaxTrees.Vname;
 import Triangle.AbstractSyntaxTrees.VnameExpression;
 import Triangle.AbstractSyntaxTrees.WhileCommand;
+import javax.swing.text.html.parser.ParserDelegator;
 
 public class Parser {
 
@@ -678,7 +682,7 @@ public class Parser {
 				FormalParameterSequence fpsAST = parseFormalParameterSequence();
 				accept(Token.RPAREN);
 				accept(Token.IS);
-				Command cAST = parseSingleCommand();
+				Command cAST = parseCommand();
 				finish(declarationPos);
 				declarationAST = new ProcDeclaration(iAST, fpsAST, cAST, declarationPos);
 			}
@@ -718,6 +722,129 @@ public class Parser {
 		}
 		return declarationAST;
 	}
+    
+    Declaration parseProcFunc() throws SyntaxError
+    { 
+        Declaration declarationAST = null; // in case there's a syntactic error
+
+		SourcePosition declarationPos = new SourcePosition();
+		start(declarationPos);
+        
+        switch(currentToken.kind ){
+            
+            case Token.PROC:
+            {
+                acceptIt();
+                Identifier iAST = parseIdentifier();
+                accept(Token.LPAREN);
+                FormalParameterSequence fAST = parseFormalParameterSequence();
+                accept(Token.RPAREN);
+                accept(Token.IS);
+                Command cAST = parseCommand();
+                finish(declarationPos);
+                declarationAST = new ProcDeclaration(iAST, fAST, cAST, declarationPos);
+                        
+                
+            }
+            break;
+            
+            case Token.FUNC:
+            {
+                acceptIt();
+                Identifier iAST = parseIdentifier();
+                accept(Token.LPAREN);
+                FormalParameterSequence fAST = parseFormalParameterSequence();
+                accept(Token.RPAREN);
+                accept(Token.COLON);
+                TypeDenoter tAST = parseTypeDenoter();
+                accept(Token.IS);
+                Expression eAST = parseExpression();
+                finish(declarationPos);
+                declarationAST = new FuncDeclaration(iAST, fAST, tAST, eAST, declarationPos);                
+            }
+            break;
+            
+            default:
+				syntacticError("\"%\" cannot start a procFunc",
+						currentToken.spelling);
+				break;
+        }
+        
+        return declarationAST;   
+             
+    }
+    
+    
+    
+    Declaration parseProcFuncs() throws SyntaxError{
+        
+        Declaration declarationAST = null; // in case there's a syntactic error
+
+		SourcePosition declarationPos = new SourcePosition();
+		start(declarationPos);
+        
+        Declaration pfAST = parseProcFunc();
+        accept(Token.PIPE);
+        Declaration pf1AST = parseProcFunc();
+        while(currentToken.kind == Token.PIPE){
+            acceptIt();
+            Declaration pf2AST = parseProcFunc();
+            finish(declarationPos);
+            declarationAST = new SequentialProcFunc(pf1AST, pf2AST, declarationPos);            
+        }
+        finish(declarationPos);
+        declarationAST = new SequentialProcFunc(pfAST, declarationAST, declarationPos);
+
+        return declarationAST;
+    }
+    
+    Declaration parseCompoundDeclaration() throws SyntaxError{
+        
+        Declaration declarationAST = null; // in case there's a syntactic error
+
+		SourcePosition declarationPos = new SourcePosition();
+		start(declarationPos);
+        
+        
+        switch(currentToken.kind){
+            
+                            
+            case Token.RECURSIVE:{
+                acceptIt();
+                Declaration d1AST = parseProcFuncs();
+                accept(Token.END);
+                finish(declarationPos);
+                declarationAST = new RecursiveCompoundDeclaration(d1AST, declarationPos);
+            }
+            break;
+            
+            case Token.LOCAL:{
+                acceptIt();
+                Declaration d1AST = parseDeclaration();
+                accept(Token.IN);
+                Declaration d2AST = parseDeclaration();
+                accept(Token.END);
+                finish(declarationPos);
+                declarationAST = new LocalCompoundDeclaration(d1AST, d2AST, declarationPos);
+            }
+            break;
+            
+            case Token.CONST:            
+            case Token.VAR:        
+            case Token.PROC:     
+            case Token.FUNC:           
+            case Token.TYPE:
+            declarationAST = parseSingleDeclaration();
+            
+            default:
+				syntacticError("\"%\" cannot start a compound declaration",
+						currentToken.spelling);
+				break;
+        }
+        return declarationAST;
+        
+        
+    }
 
 ///////////////////////////////////////////////////////////////////////////////
 //

@@ -54,6 +54,10 @@ public interface Visitor {
   public abstract Object visitTypeDeclaration(TypeDeclaration ast, Object o);
   public abstract Object visitUnaryOperatorDeclaration(UnaryOperatorDeclaration ast, Object o);
   public abstract Object visitVarDeclaration(VarDeclaration ast, Object o);
+  public abstract Object visitSequentialProcFunc(SequentialProcFunc ast, Object o);
+  public abstract Object visitRecursieCompDeclaration(RecursiveCompoundDeclaration ast, Object o);
+  public abstract Object visitLocalCompoundDeclaration(LocalCompoundDeclaration ast, Object o);
+
 
   // Array Aggregates
   public abstract Object visitMultipleArrayAggregate(MultipleArrayAggregate ast, Object o);
@@ -109,5 +113,7 @@ public interface Visitor {
 
   // Programs
   public abstract Object visitProgram(Program ast, Object o);
+
+  
 
 }

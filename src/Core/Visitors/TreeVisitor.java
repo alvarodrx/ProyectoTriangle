@@ -40,6 +40,7 @@ import Triangle.AbstractSyntaxTrees.IntegerExpression;
 import Triangle.AbstractSyntaxTrees.IntegerLiteral;
 import Triangle.AbstractSyntaxTrees.LetCommand;
 import Triangle.AbstractSyntaxTrees.LetExpression;
+import Triangle.AbstractSyntaxTrees.LocalCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.MultipleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleArrayAggregate;
 import Triangle.AbstractSyntaxTrees.MultipleFieldTypeDenoter;
@@ -52,9 +53,11 @@ import Triangle.AbstractSyntaxTrees.ProcFormalParameter;
 import Triangle.AbstractSyntaxTrees.Program;
 import Triangle.AbstractSyntaxTrees.RecordExpression;
 import Triangle.AbstractSyntaxTrees.RecordTypeDenoter;
+import Triangle.AbstractSyntaxTrees.RecursiveCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.SequentialElsifCommand;
+import Triangle.AbstractSyntaxTrees.SequentialProcFunc;
 import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
@@ -196,6 +199,21 @@ public class TreeVisitor implements Visitor {
         return(createQuaternary("Binary Operator Declaration", ast.O, ast.ARG1, ast.ARG2, ast.RES));
     }
     
+    @Override
+    public Object visitSequentialProcFunc(SequentialProcFunc ast, Object o) {
+        return(createBinary("ProcFuncs Declaration", ast.D1, ast.D2));
+    }
+    
+    @Override
+    public Object visitRecursieCompDeclaration(RecursiveCompoundDeclaration ast, Object o) {
+        return (createUnary("Recursive Compound Declaration", ast.SPF));
+    }
+    
+    @Override
+    public Object visitLocalCompoundDeclaration(LocalCompoundDeclaration ast, Object o) {
+        return (createBinary("Local Compound Declaration", ast.D1, ast.D2));
+    }
+
     public Object visitConstDeclaration(ConstDeclaration ast, Object obj) {
         return(createBinary("Constant Declaration", ast.I, ast.E));
     }
@@ -463,4 +481,10 @@ public class TreeVisitor implements Visitor {
         return(t);             
     }
     // </editor-fold>
+
+    
+
+    
+
+    
 }
