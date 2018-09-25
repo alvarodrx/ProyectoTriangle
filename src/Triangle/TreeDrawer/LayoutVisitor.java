@@ -48,6 +48,7 @@ import Triangle.AbstractSyntaxTrees.FuncFormalParameter;
 import Triangle.AbstractSyntaxTrees.Identifier;
 import Triangle.AbstractSyntaxTrees.IfCommand;
 import Triangle.AbstractSyntaxTrees.IfExpression;
+import Triangle.AbstractSyntaxTrees.InitializedVarDeclaration;
 import Triangle.AbstractSyntaxTrees.IntTypeDenoter;
 import Triangle.AbstractSyntaxTrees.IntegerExpression;
 import Triangle.AbstractSyntaxTrees.IntegerLiteral;
@@ -220,6 +221,11 @@ public class LayoutVisitor implements Visitor {
 
 	public Object visitProcDeclaration(ProcDeclaration ast, Object obj) {
 		return layoutTernary("ProcDecl.", ast.I, ast.FPS, ast.C);
+	}
+	
+	@Override
+	public Object visitInitializedVarDeclaration(InitializedVarDeclaration ast, Object o) {
+		return layoutBinary("InitVarDec.", ast.I, ast.E);
 	}
 
 	public Object visitSequentialDeclaration(SequentialDeclaration ast, Object obj) {
@@ -594,6 +600,8 @@ public class LayoutVisitor implements Visitor {
 
 		return r;
 	}
+
+	
 
 
 }

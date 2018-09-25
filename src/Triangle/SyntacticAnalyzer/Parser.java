@@ -53,6 +53,7 @@ import Triangle.AbstractSyntaxTrees.FuncFormalParameter;
 import Triangle.AbstractSyntaxTrees.Identifier;
 import Triangle.AbstractSyntaxTrees.IfCommand;
 import Triangle.AbstractSyntaxTrees.IfExpression;
+import Triangle.AbstractSyntaxTrees.InitializedVarDeclaration;
 import Triangle.AbstractSyntaxTrees.IntegerExpression;
 import Triangle.AbstractSyntaxTrees.IntegerLiteral;
 import Triangle.AbstractSyntaxTrees.LetCommand;
@@ -790,10 +791,22 @@ public class Parser {
 			case Token.VAR: {
 				acceptIt();
 				Identifier iAST = parseIdentifier();
-				accept(Token.COLON);
-				TypeDenoter tAST = parseTypeDenoter();
-				finish(declarationPos);
-				declarationAST = new VarDeclaration(iAST, tAST, declarationPos);
+				switch(currentToken.kind){
+					case Token.COLON:{
+						acceptIt();
+						TypeDenoter tAST = parseTypeDenoter();
+						finish(declarationPos);
+						declarationAST = new VarDeclaration(iAST, tAST, declarationPos);
+					}break;
+					case Token.IS:{
+						acceptIt();
+						Expression eAST = parseExpression();
+						finish(declarationPos);
+						declarationAST = new InitializedVarDeclaration(iAST, eAST, declarationPos);						
+					}break;
+				}
+				
+				
 			}
 			break;
 

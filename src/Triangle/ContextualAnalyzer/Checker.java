@@ -90,6 +90,7 @@ import Triangle.AbstractSyntaxTrees.DoWhileCommand;
 import Triangle.AbstractSyntaxTrees.ElseCase;
 import Triangle.AbstractSyntaxTrees.ElsifCommand;
 import Triangle.AbstractSyntaxTrees.ForCommand;
+import Triangle.AbstractSyntaxTrees.InitializedVarDeclaration;
 import Triangle.AbstractSyntaxTrees.SelectCaseCommand;
 import Triangle.AbstractSyntaxTrees.SequentialCase;
 import Triangle.AbstractSyntaxTrees.SequentialCaseLiteral;
@@ -400,6 +401,18 @@ public final class Checker implements Visitor {
 		}
 		return null;
 	}
+	
+	@Override
+	public Object visitInitializedVarDeclaration(InitializedVarDeclaration ast, Object o) {
+		TypeDenoter eType = (TypeDenoter) ast.E.visit(this, null);
+		idTable.enter(ast.I.spelling, ast);
+		if (ast.duplicated) {
+			reporter.reportError("identifier \"%\" already declared",
+					ast.I.spelling, ast.position);
+		}
+		return null;
+	}
+
 
 	public Object visitFuncDeclaration(FuncDeclaration ast, Object o) {
 		ast.T = (TypeDenoter) ast.T.visit(this, null);
@@ -1046,8 +1059,6 @@ public final class Checker implements Visitor {
 	}
 
 	
-
-
 
 
 }
