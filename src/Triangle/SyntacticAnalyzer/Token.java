@@ -69,7 +69,7 @@ final class Token extends Object {
     // reserved words - must be in alphabetical order...
     ARRAY		= 4,
     BEGIN		= 5,
-    CASE		= 6,
+    CASE                = 6,
     CONST		= 7, 
     DO			= 8,
     ELSE		= 9,
@@ -86,7 +86,7 @@ final class Token extends Object {
     OF			= 20,
     PROC		= 21,
     RECORD		= 22,
-    RECURSIVE	= 23,
+    RECURSIVE		= 23,
     REPEAT		= 24,
     SELECT		= 25,
     THEN		= 26,
@@ -99,7 +99,7 @@ final class Token extends Object {
     // punctuation...
     DOT			= 32,
     COLON		= 33,
-    SEMICOLON	= 34,
+    SEMICOLON		= 34,
     COMMA		= 35,
     BECOMES		= 36,
     IS			= 37,
@@ -107,8 +107,8 @@ final class Token extends Object {
     // brackets...
     LPAREN		= 38,
     RPAREN		= 39,
-    LBRACKET	= 40,
-    RBRACKET	= 41,
+    LBRACKET		= 40,
+    RBRACKET		= 41,
     LCURLY		= 42,
     RCURLY		= 43,
 

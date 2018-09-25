@@ -23,26 +23,24 @@ import Triangle.AbstractSyntaxTrees.ConstFormalParameter;
 import Triangle.AbstractSyntaxTrees.DoUntilCommand;
 import Triangle.AbstractSyntaxTrees.DotVname;
 import Triangle.AbstractSyntaxTrees.DoWhileCommand;
-import Triangle.AbstractSyntaxTrees.ElseCase;
 import Triangle.AbstractSyntaxTrees.ElsifCommand;
 import Triangle.AbstractSyntaxTrees.EmptyActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.EmptyCommand;
 import Triangle.AbstractSyntaxTrees.EmptyExpression;
 import Triangle.AbstractSyntaxTrees.EmptyFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.ErrorTypeDenoter;
-import Triangle.AbstractSyntaxTrees.ForCommand;
 import Triangle.AbstractSyntaxTrees.FuncActualParameter;
 import Triangle.AbstractSyntaxTrees.FuncDeclaration;
 import Triangle.AbstractSyntaxTrees.FuncFormalParameter;
 import Triangle.AbstractSyntaxTrees.Identifier;
 import Triangle.AbstractSyntaxTrees.IfCommand;
 import Triangle.AbstractSyntaxTrees.IfExpression;
-import Triangle.AbstractSyntaxTrees.InitializedVarDeclaration;
 import Triangle.AbstractSyntaxTrees.IntTypeDenoter;
 import Triangle.AbstractSyntaxTrees.IntegerExpression;
 import Triangle.AbstractSyntaxTrees.IntegerLiteral;
 import Triangle.AbstractSyntaxTrees.LetCommand;
 import Triangle.AbstractSyntaxTrees.LetExpression;
+import Triangle.AbstractSyntaxTrees.LocalCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.MultipleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleArrayAggregate;
 import Triangle.AbstractSyntaxTrees.MultipleFieldTypeDenoter;
@@ -55,18 +53,15 @@ import Triangle.AbstractSyntaxTrees.ProcFormalParameter;
 import Triangle.AbstractSyntaxTrees.Program;
 import Triangle.AbstractSyntaxTrees.RecordExpression;
 import Triangle.AbstractSyntaxTrees.RecordTypeDenoter;
-import Triangle.AbstractSyntaxTrees.SelectCaseCommand;
-import Triangle.AbstractSyntaxTrees.SequentialCase;
-import Triangle.AbstractSyntaxTrees.SequentialCaseLiteral;
+import Triangle.AbstractSyntaxTrees.RecursiveCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.SequentialElsifCommand;
+import Triangle.AbstractSyntaxTrees.SequentialProcFunc;
 import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleArrayAggregate;
-import Triangle.AbstractSyntaxTrees.SingleCase;
-import Triangle.AbstractSyntaxTrees.SingleCaseLiteral;
 import Triangle.AbstractSyntaxTrees.SingleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
@@ -116,10 +111,6 @@ public class TreeVisitor implements Visitor {
 	public Object visitElsifCommand(ElsifCommand ast, Object obj) {
         return(createBinary("Elsif Command", ast.E, ast.C));
     }
-	
-	public Object visitForCommand(ForCommand ast, Object obj) {
-        return(createQuaternary("For Command", ast.I, ast.E1, ast.E2, ast.C));
-    }
     
     public Object visitIfCommand(IfCommand ast, Object obj) {
         return(createTernary("If Command", ast.E, ast.C1, ast.C2));
@@ -133,39 +124,9 @@ public class TreeVisitor implements Visitor {
         return(createBinary("Sequential Command", ast.C1, ast.C2));
     }
 	
-	public Object visitSequentialCase(SequentialCase ast, Object o) {
-		return(createBinary("Sequential Case", ast.C1, ast.C2));
-	}
-	
 	public Object visitSequentialElsifCommand(SequentialElsifCommand ast, Object obj) {
         return(createBinary("Sequential Elsif Command", ast.C1, ast.C2));
     }
-	
-	@Override
-	public Object visitSequentialCaseLiteral(SequentialCaseLiteral ast, Object o) {
-		return(createBinary("Sequential Case-Literal", ast.T1, ast.T2));
-	}
-	
-	@Override
-	public Object visitElseCase(ElseCase ast, Object o) {
-		return(createUnary("ElseCase", ast.C));
-	}
-
-	@Override
-	public Object visitSingleCaseLiteral(SingleCaseLiteral ast, Object o) {
-		return(createUnary("Single Case-Literal", ast.T));
-	}
-
-	@Override
-	public Object visitSingleCase(SingleCase ast, Object o) {
-		return(createBinary("Case", ast.CL, ast.CM));
-	}
-	
-	@Override
-	public Object visitSelectCaseCommand(SelectCaseCommand ast, Object o) {
-		return(createBinary("SelectCase", ast.E, ast.C));
-	}
-
 	
     
     public Object visitWhileCommand(WhileCommand ast, Object obj) {
@@ -238,14 +199,24 @@ public class TreeVisitor implements Visitor {
         return(createQuaternary("Binary Operator Declaration", ast.O, ast.ARG1, ast.ARG2, ast.RES));
     }
     
+    @Override
+    public Object visitSequentialProcFunc(SequentialProcFunc ast, Object o) {
+        return(createBinary("ProcFuncs Declaration", ast.D1, ast.D2));
+    }
+    
+    @Override
+    public Object visitRecursieCompDeclaration(RecursiveCompoundDeclaration ast, Object o) {
+        return (createUnary("Recursive Compound Declaration", ast.SPF));
+    }
+    
+    @Override
+    public Object visitLocalCompoundDeclaration(LocalCompoundDeclaration ast, Object o) {
+        return (createBinary("Local Compound Declaration", ast.D1, ast.D2));
+    }
+
     public Object visitConstDeclaration(ConstDeclaration ast, Object obj) {
         return(createBinary("Constant Declaration", ast.I, ast.E));
     }
-	
-	@Override
-	public Object visitInitializedVarDeclaration(InitializedVarDeclaration ast, Object o) {
-		return(createBinary("Initialized Var Declaration", ast.I, ast.E));
-	}
     
     public Object visitFuncDeclaration(FuncDeclaration ast, Object obj) {
         return(createQuaternary("Function Declaration", ast.I, ast.FPS, ast.T, ast.E));
@@ -511,9 +482,9 @@ public class TreeVisitor implements Visitor {
     }
     // </editor-fold>
 
-	
+    
 
+    
 
-
-
+    
 }
