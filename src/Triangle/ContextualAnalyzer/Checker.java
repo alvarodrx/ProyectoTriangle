@@ -93,6 +93,14 @@ import Triangle.AbstractSyntaxTrees.RecursiveCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.SequentialElsifCommand;
 import Triangle.AbstractSyntaxTrees.UntilCommand;
 import Triangle.AbstractSyntaxTrees.SequentialProcFunc;
+import Triangle.AbstractSyntaxTrees.ElseCase;
+import Triangle.AbstractSyntaxTrees.ForCommand;
+import Triangle.AbstractSyntaxTrees.InitializedVarDeclaration;
+import Triangle.AbstractSyntaxTrees.SelectCaseCommand;
+import Triangle.AbstractSyntaxTrees.SequentialCase;
+import Triangle.AbstractSyntaxTrees.SequentialCaseLiteral;
+import Triangle.AbstractSyntaxTrees.SingleCase;
+import Triangle.AbstractSyntaxTrees.SingleCaseLiteral;
 
 public final class Checker implements Visitor {
 
@@ -522,6 +530,73 @@ public final class Checker implements Visitor {
         ast.FP.visit(this, null);
         return null;
     }
+	
+	// ---------------------------- Agregados nuevos ---------------------------
+	@Override
+	public Object visitElseCase(ElseCase ast, Object o) {
+		ast.C.visit(this, null);
+		return null;
+	}
+	
+	@Override
+	public Object visitSingleCaseLiteral(SingleCaseLiteral ast, Object o) {
+		ast.T.visit(this, o);
+		return null;
+	}
+
+	@Override
+	public Object visitSingleCase(SingleCase ast, Object o) {
+		ast.CL.visit(this, o);
+		ast.CM.visit(this, o);
+		return null;
+	}
+	
+	@Override
+	public Object visitSelectCaseCommand(SelectCaseCommand ast, Object o) {
+		ast.E.visit(this, null);
+		ast.C.visit(this, null);
+		return null;
+	}
+	
+		@Override
+	public Object visitSequentialCase(SequentialCase ast, Object o) {
+		ast.C1.visit(this, null);
+		ast.C2.visit(this, null);
+		return null;
+	}
+	
+	public Object visitSequentialCaseLiteral(SequentialCaseLiteral ast, Object o) {
+		ast.T1.visit(this, null);		
+		ast.T2.visit(this, null);
+		return null;
+	}
+	
+	public Object visitForCommand(ForCommand ast, Object o) {  //Este codigo no funciona del todo, falta ver la parte del identifier
+		TypeDenoter eType = (TypeDenoter) ast.E1.visit(this, null);
+		if (!eType.equals(StdEnvironment.booleanType)) {
+			reporter.reportError("Boolean expression expected here", "", ast.E1.position);
+		}
+		eType = (TypeDenoter) ast.E2.visit(this, null);
+		if (!eType.equals(StdEnvironment.booleanType)) {
+			reporter.reportError("Boolean expression expected here", "", ast.E2.position);
+		}
+		ast.C.visit(this, null);
+		return null;
+	}
+	
+	public Object visitInitializedVarDeclaration(InitializedVarDeclaration ast, Object o) {
+		TypeDenoter eType = (TypeDenoter) ast.E.visit(this, null);
+		idTable.enter(ast.I.spelling, ast);
+		if (ast.duplicated) {
+			reporter.reportError("identifier \"%\" already declared",
+					ast.I.spelling, ast.position);
+		}
+		return null;
+	}
+	
+	
+	
+	/// ------------------------------------------------------------------------
 
     // Actual Parameters
     // Always returns null. Uses the given FormalParameter.

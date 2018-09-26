@@ -114,6 +114,21 @@ public interface Visitor {
   // Programs
   public abstract Object visitProgram(Program ast, Object o);
 
-  
+  	// Cases
+	public abstract Object visitElseCase(ElseCase ast, Object o);
+
+	public abstract Object visitSingleCaseLiteral(SingleCaseLiteral ast, Object o);
+
+	public abstract Object visitSingleCase(SingleCase ast, Object o);
+
+	public abstract Object visitSequentialCase(SequentialCase ast, Object o);
+
+	public abstract Object visitSelectCaseCommand(SelectCaseCommand ast, Object o);
+
+	public abstract Object visitSequentialCaseLiteral(SequentialCaseLiteral ast, Object o);
+
+	public Object visitForCommand(ForCommand aThis, Object o);
+
+	public Object visitInitializedVarDeclaration(InitializedVarDeclaration aThis, Object o);
 
 }

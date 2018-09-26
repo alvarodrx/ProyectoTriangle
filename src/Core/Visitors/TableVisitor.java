@@ -22,18 +22,21 @@ import Triangle.AbstractSyntaxTrees.ConstFormalParameter;
 import Triangle.AbstractSyntaxTrees.DoUntilCommand;
 import Triangle.AbstractSyntaxTrees.DoWhileCommand;
 import Triangle.AbstractSyntaxTrees.DotVname;
+import Triangle.AbstractSyntaxTrees.ElseCase;
 import Triangle.AbstractSyntaxTrees.ElsifCommand;
 import Triangle.AbstractSyntaxTrees.EmptyActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.EmptyCommand;
 import Triangle.AbstractSyntaxTrees.EmptyExpression;
 import Triangle.AbstractSyntaxTrees.EmptyFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.ErrorTypeDenoter;
+import Triangle.AbstractSyntaxTrees.ForCommand;
 import Triangle.AbstractSyntaxTrees.FuncActualParameter;
 import Triangle.AbstractSyntaxTrees.FuncDeclaration;
 import Triangle.AbstractSyntaxTrees.FuncFormalParameter;
 import Triangle.AbstractSyntaxTrees.Identifier;
 import Triangle.AbstractSyntaxTrees.IfCommand;
 import Triangle.AbstractSyntaxTrees.IfExpression;
+import Triangle.AbstractSyntaxTrees.InitializedVarDeclaration;
 import Triangle.AbstractSyntaxTrees.IntTypeDenoter;
 import Triangle.AbstractSyntaxTrees.IntegerExpression;
 import Triangle.AbstractSyntaxTrees.IntegerLiteral;
@@ -53,6 +56,9 @@ import Triangle.AbstractSyntaxTrees.Program;
 import Triangle.AbstractSyntaxTrees.RecordExpression;
 import Triangle.AbstractSyntaxTrees.RecordTypeDenoter;
 import Triangle.AbstractSyntaxTrees.RecursiveCompoundDeclaration;
+import Triangle.AbstractSyntaxTrees.SelectCaseCommand;
+import Triangle.AbstractSyntaxTrees.SequentialCase;
+import Triangle.AbstractSyntaxTrees.SequentialCaseLiteral;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
 import Triangle.AbstractSyntaxTrees.SequentialElsifCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
@@ -61,6 +67,8 @@ import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleArrayAggregate;
+import Triangle.AbstractSyntaxTrees.SingleCase;
+import Triangle.AbstractSyntaxTrees.SingleCaseLiteral;
 import Triangle.AbstractSyntaxTrees.SingleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
@@ -676,15 +684,94 @@ public class TableVisitor implements Visitor {
     // <editor-fold defaultstate="collapsed" desc=" Attributes ">
     private DefaultTableModel model;
     // </editor-fold>
+	
+	
+	// <editor-fold defaultstate="collapsed" desc=" Nuevos ">
+    // Nuevos
+		public Object visitSequentialCase(SequentialCase ast, Object o) {
+		ast.C1.visit(this, null);
+		ast.C2.visit(this, null);
+		return (null);
+	}
+	
+		@Override
+	public Object visitSelectCaseCommand(SelectCaseCommand ast, Object o) {
+		ast.E.visit(this, null);
+		ast.C.visit(this, null);
+		return (null);
+	}
+	
+	public Object visitElseCase(ElseCase ast, Object o) {
+		ast.C.visit(this, null);
+		return (null);
+	}
+	
+	public Object visitSingleCaseLiteral(SingleCaseLiteral ast, Object o) {
+		ast.T.visit(this, null);
+		return (null);
+	}
+
+	public Object visitSingleCase(SingleCase ast, Object o) {
+		ast.CL.visit(this, null);
+		ast.CM.visit(this, null);
+		return (null);
+	}
+	
+	@Override
+	public Object visitSequentialCaseLiteral(SequentialCaseLiteral ast, Object o) {
+		ast.T1.visit(this, null);
+		ast.T2.visit(this, null);
+		return (null);	
+	}
 
     @Override
     public Object visitRecursieCompDeclaration(RecursiveCompoundDeclaration ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ast.SPF.visit(this, o);
+		return (null);
     }
 
     @Override
     public Object visitLocalCompoundDeclaration(LocalCompoundDeclaration ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ast.D1.visit(this, o);
+		ast.D2.visit(this, o);
+		return null;
     }
+	
+	public Object visitForCommand(ForCommand ast, Object o) {
+		ast.I.visit(this, null);
+		ast.E1.visit(this, null);
+		ast.E2.visit(this, null);
+		ast.C.visit(this, null);
+		return (null);
+	}
 
+	@Override
+	public Object visitInitializedVarDeclaration(InitializedVarDeclaration ast, Object o) {
+		String name = ast.I.spelling;
+		String type = "N/A";
+		try {
+			int size = (ast.entity != null ? ast.entity.size : 0);
+			int level = -1;
+			int displacement = -1;
+			int value = -1;
+
+			if (ast.entity instanceof KnownValue) {
+				type = "KnownValue";
+				value = ((KnownValue) ast.entity).value;
+			} else if (ast.entity instanceof UnknownValue) {
+				type = "UnknownValue";
+				level = ((UnknownValue) ast.entity).address.level;
+				displacement = ((UnknownValue) ast.entity).address.displacement;
+			}
+			addIdentifier(name, type, size, level, displacement, value);
+		} catch (NullPointerException e) {
+		}
+
+		ast.E.visit(this, null);
+		ast.I.visit(this, null);
+
+		return (null);
+	}
+
+	// </editor-fold>
 }
