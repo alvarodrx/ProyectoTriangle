@@ -23,10 +23,25 @@ public class ArrayTypeDenoter extends TypeDenoter {
     super (thePosition);
     IL = ilAST;
     T = tAST;
+	rangeArray = false;
   }
-
+  
+  public ArrayTypeDenoter (IntegerLiteral ilAST, IntegerLiteral il2AST, TypeDenoter tAST,
+                    SourcePosition thePosition) {
+    super (thePosition);
+    IL = ilAST;
+	IL2 = il2AST;
+    T = tAST;
+	rangeArray = true;
+  }
+  
   public Object visit(Visitor v, Object o) {
-    return v.visitArrayTypeDenoter(this, o);
+	if(rangeArray){
+		return v.visitRangeArrayTypeDenoter(this, o);
+	}else{
+		return v.visitArrayTypeDenoter(this, o);
+	}
+    
   }
 
   public boolean equals (Object obj) {
@@ -39,6 +54,7 @@ public class ArrayTypeDenoter extends TypeDenoter {
       return false;
   }
 
-  public IntegerLiteral IL;
+  public IntegerLiteral IL, IL2;
   public TypeDenoter T;
+  private boolean rangeArray;
 }

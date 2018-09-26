@@ -333,6 +333,11 @@ public class LayoutVisitor implements Visitor {
 	public Object visitArrayTypeDenoter(ArrayTypeDenoter ast, Object obj) {
 		return layoutBinary("ArrayTypeD.", ast.IL, ast.T);
 	}
+	
+	@Override
+	public Object visitRangeArrayTypeDenoter(ArrayTypeDenoter ast, Object o) {
+		return layoutTernary("ArrayTypeD.", ast.IL, ast.IL2, ast.T);
+	}
 
 	public Object visitBoolTypeDenoter(BoolTypeDenoter ast, Object obj) {
 		return layoutNullary("bool");
@@ -624,9 +629,7 @@ public class LayoutVisitor implements Visitor {
 		return layoutQuaternary("ForCom.", ast.I, ast.E1, ast.E2, ast.C);
 	}
 
-
-   
-
+	
 
 
 }

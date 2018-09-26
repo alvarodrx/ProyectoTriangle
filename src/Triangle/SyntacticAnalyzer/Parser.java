@@ -446,7 +446,7 @@ public class Parser {
 	}
 	
 	
-	///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 //
 // CASES
 //
@@ -1203,10 +1203,20 @@ public class Parser {
 			case Token.ARRAY: {
 				acceptIt();
 				IntegerLiteral ilAST = parseIntegerLiteral();
-				accept(Token.OF);
-				TypeDenoter tAST = parseTypeDenoter();
-				finish(typePos);
-				typeAST = new ArrayTypeDenoter(ilAST, tAST, typePos);
+				if(currentToken.kind == Token.DOTDOT){
+					acceptIt();
+					IntegerLiteral il2AST = parseIntegerLiteral();
+					accept(Token.OF);
+					TypeDenoter tAST = parseTypeDenoter();
+					finish(typePos);
+					typeAST = new ArrayTypeDenoter(ilAST, il2AST, tAST, typePos);
+				} else{
+					accept(Token.OF);
+					TypeDenoter tAST = parseTypeDenoter();
+					finish(typePos);
+					typeAST = new ArrayTypeDenoter(ilAST, tAST, typePos);
+				}
+				
 			}
 			break;
 

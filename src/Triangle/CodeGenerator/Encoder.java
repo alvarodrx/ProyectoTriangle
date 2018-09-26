@@ -1123,4 +1123,9 @@ public final class Encoder implements Visitor {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
+	@Override
+	public Object visitRangeArrayTypeDenoter(ArrayTypeDenoter ast, Object o) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
 }

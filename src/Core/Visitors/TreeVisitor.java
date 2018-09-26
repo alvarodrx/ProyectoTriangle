@@ -533,6 +533,11 @@ public class TreeVisitor implements Visitor {
 		return(createBinary("Initialized Var Declaration", ast.I, ast.E));
 	}
 
+	@Override
+	public Object visitRangeArrayTypeDenoter(ArrayTypeDenoter ast, Object o) {
+		return(createTernary("Ranged Array Type Denoter", ast.IL, ast.IL2, ast.T));
+	}
+
     
 
     

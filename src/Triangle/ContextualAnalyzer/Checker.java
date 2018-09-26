@@ -1081,5 +1081,17 @@ public final class Checker implements Visitor {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+	@Override
+	public Object visitRangeArrayTypeDenoter(ArrayTypeDenoter ast, Object o) {
+		ast.T = (TypeDenoter) ast.T.visit(this, null);
+        if ((Integer.valueOf(ast.IL.spelling).intValue()) == (Integer.valueOf(ast.IL2.spelling).intValue())) {
+            reporter.reportError("arrays must not be empty", "", ast.IL.position);
+        }
+		if ((Integer.valueOf(ast.IL.spelling).intValue()) < (Integer.valueOf(ast.IL2.spelling).intValue())) {
+            reporter.reportError("second value of the array must be higher than first value", "", ast.IL.position);
+        }
+        return ast;
+	}
+
 
 }

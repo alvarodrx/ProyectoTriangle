@@ -774,4 +774,12 @@ public class TableVisitor implements Visitor {
 	}
 
 	// </editor-fold>
+
+	@Override
+	public Object visitRangeArrayTypeDenoter(ArrayTypeDenoter ast, Object o) {
+		ast.IL.visit(this, null);
+		ast.IL2.visit(this, null);
+        ast.T.visit(this, null);
+		return null;
+	}
 }

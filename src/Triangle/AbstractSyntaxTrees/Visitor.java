@@ -127,8 +127,10 @@ public interface Visitor {
 
 	public abstract Object visitSequentialCaseLiteral(SequentialCaseLiteral ast, Object o);
 
-	public Object visitForCommand(ForCommand aThis, Object o);
+	public abstract Object visitForCommand(ForCommand aThis, Object o);
 
-	public Object visitInitializedVarDeclaration(InitializedVarDeclaration aThis, Object o);
+	public abstract Object visitInitializedVarDeclaration(InitializedVarDeclaration aThis, Object o);
+
+	public abstract Object visitRangeArrayTypeDenoter(ArrayTypeDenoter ast, Object o);
 
 }
