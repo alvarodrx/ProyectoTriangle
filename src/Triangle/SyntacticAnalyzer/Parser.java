@@ -382,7 +382,7 @@ public class Parser {
 							Expression eAST = parseExpression();
 							finish(commandPos);
 							commandAST = new DoUntilCommand(cAST, eAST, commandPos);
-						} else syntacticError("\"%\" cannot start a Repeat Do command", currentToken.spelling);
+						} else syntacticError("\"%\" is not an option for a Repeat Do command", currentToken.spelling);
 					}
 					break;
 					
@@ -399,6 +399,10 @@ public class Parser {
 						commandAST = new ForCommand(iAST, eAST_1, eAST_2, cAST, commandPos);
 					}
 					break;
+						
+					default:
+						syntacticError("\"%\" is not an option for a Repeat command", currentToken.spelling);
+						break;
 				}
 				accept(Token.END);
 						
@@ -765,10 +769,10 @@ public class Parser {
 
 		SourcePosition declarationPos = new SourcePosition();
 		start(declarationPos);
-		declarationAST = parseSingleDeclaration();
+		declarationAST = parseCompoundDeclaration();
 		while (currentToken.kind == Token.SEMICOLON) {
 			acceptIt();
-			Declaration d2AST = parseSingleDeclaration();
+			Declaration d2AST = parseCompoundDeclaration();
 			finish(declarationPos);
 			declarationAST = new SequentialDeclaration(declarationAST, d2AST,
 					declarationPos);
@@ -881,6 +885,7 @@ public class Parser {
                 accept(Token.RPAREN);
                 accept(Token.IS);
                 Command cAST = parseCommand();
+				accept(Token.END);
                 finish(declarationPos);
                 declarationAST = new ProcDeclaration(iAST, fAST, cAST, declarationPos);
                         
@@ -899,6 +904,7 @@ public class Parser {
                 TypeDenoter tAST = parseTypeDenoter();
                 accept(Token.IS);
                 Expression eAST = parseExpression();
+				accept(Token.END);
                 finish(declarationPos);
                 declarationAST = new FuncDeclaration(iAST, fAST, tAST, eAST, declarationPos);                
             }
@@ -926,14 +932,15 @@ public class Parser {
         Declaration pfAST = parseProcFunc();
         accept(Token.PIPE);
         Declaration pf1AST = parseProcFunc();
+		declarationAST = new SequentialProcFunc(pfAST, pf1AST, declarationPos);
         while(currentToken.kind == Token.PIPE){
             acceptIt();
             Declaration pf2AST = parseProcFunc();
             finish(declarationPos);
-            declarationAST = new SequentialProcFunc(pf1AST, pf2AST, declarationPos);            
+            declarationAST = new SequentialProcFunc(declarationAST, pf2AST, declarationPos);            
         }
         finish(declarationPos);
-        declarationAST = new SequentialProcFunc(pfAST, declarationAST, declarationPos);
+        //declarationAST = new SequentialProcFunc(pfAST, declarationAST, declarationPos);
 
         return declarationAST;
     }
@@ -974,8 +981,8 @@ public class Parser {
             case Token.PROC:     
             case Token.FUNC:           
             case Token.TYPE:
-            declarationAST = parseSingleDeclaration();
-            
+				declarationAST = parseSingleDeclaration();
+				break;
             default:
 				syntacticError("\"%\" cannot start a compound declaration",
 						currentToken.spelling);
