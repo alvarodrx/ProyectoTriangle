@@ -1,0 +1,6 @@
+let 
+ var x : Integer
+in
+ while (x < 10) do
+  x := x + 1
+end

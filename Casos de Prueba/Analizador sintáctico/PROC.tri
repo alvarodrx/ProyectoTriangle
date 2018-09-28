@@ -1,0 +1,14 @@
+let
+	var x : Integer;
+	recursive 
+		proc fnc1(var x:Integer, var y : char) ~ 
+			nil
+		end
+		|
+		proc fnc2(var x:Integer, var y : char) ~ 
+			nil
+		end
+	end
+in
+	nil
+end

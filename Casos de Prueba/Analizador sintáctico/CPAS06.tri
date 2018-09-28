@@ -1,0 +1,4 @@
+x:=1;
+repeat while (x < 10)
+ x:=x+1
+end
