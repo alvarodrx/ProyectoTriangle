@@ -940,8 +940,6 @@ public class Parser {
             declarationAST = new SequentialProcFunc(declarationAST, pf2AST, declarationPos);            
         }
         finish(declarationPos);
-        //declarationAST = new SequentialProcFunc(pfAST, declarationAST, declarationPos);
-
         return declarationAST;
     }
     

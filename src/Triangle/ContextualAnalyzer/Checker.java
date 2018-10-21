@@ -572,14 +572,29 @@ public final class Checker implements Visitor {
 	}
 	
 	public Object visitForCommand(ForCommand ast, Object o) {  //Este codigo no funciona del todo, falta ver la parte del identifier
+		Declaration binding = (Declaration) ast.I.visit(this, null);
+        if (binding == null) {
+            reportUndeclared(ast.I);
+            return StdEnvironment.errorType;
+        } else if (!(binding instanceof TypeDeclaration)) {
+            reporter.reportError("\"%\" is not a type identifier",
+                    ast.I.spelling, ast.I.position);
+            return StdEnvironment.errorType;
+        }
 		TypeDenoter eType = (TypeDenoter) ast.E1.visit(this, null);
-		if (!eType.equals(StdEnvironment.booleanType)) {
-			reporter.reportError("Boolean expression expected here", "", ast.E1.position);
+		if (!eType.equals(StdEnvironment.integerType)) {
+			reporter.reportError("Integer expression expected here", "", ast.E1.position);
 		}
 		eType = (TypeDenoter) ast.E2.visit(this, null);
-		if (!eType.equals(StdEnvironment.booleanType)) {
-			reporter.reportError("Boolean expression expected here", "", ast.E2.position);
+		if (!eType.equals(StdEnvironment.integerType)) {
+			reporter.reportError("Integer expression expected here", "", ast.E2.position);
 		}
+		
+		TypeDenoter iType = (TypeDenoter)ast.I.visit(this, null);
+		if (!iType.equals(StdEnvironment.integerType)) {
+			reporter.reportError("Integer identifier expected here", "", ast.I.position);
+		}
+		
 		ast.C.visit(this, null);
 		return null;
 	}
