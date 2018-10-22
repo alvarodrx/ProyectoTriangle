@@ -553,7 +553,11 @@ public final class Checker implements Visitor {
 	
 	@Override
 	public Object visitSelectCaseCommand(SelectCaseCommand ast, Object o) {
-		ast.E.visit(this, null);
+		TypeDenoter eType = (TypeDenoter) ast.E.visit(this, null);
+		if (!eType.equals(StdEnvironment.integerType) || !eType.equals(StdEnvironment.charType)) {
+                    reporter.reportError("Integer or char expression expected here", "",
+                            ast.E.position);
+		}
 		ast.C.visit(this, null);
 		return null;
 	}
