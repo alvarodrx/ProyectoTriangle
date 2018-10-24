@@ -956,10 +956,29 @@ public class Parser {
                             
             case Token.RECURSIVE:{
                 acceptIt();
-                Declaration d1AST = parseProcFuncs();
-                accept(Token.END);
-                finish(declarationPos);
-                declarationAST = new RecursiveCompoundDeclaration(d1AST, declarationPos);
+				Declaration dAST1 = parseProcFunc();
+				accept(Token.PIPE);
+				Declaration dAST2 = parseProcFunc();
+				if(currentToken.kind == Token.END){
+					acceptIt();
+					finish(declarationPos);
+					declarationAST = new RecursiveCompoundDeclaration(dAST1,dAST2,declarationPos);
+					break;
+				}
+				finish(declarationPos);
+				declarationAST = new RecursiveCompoundDeclaration(dAST1,dAST2,declarationPos);
+				while (currentToken.kind == Token.PIPE) {
+				  acceptIt();
+				  Declaration dAST3 = parseProcFunc();
+				  finish(declarationPos);
+				  if(currentToken.kind==Token.END){
+					  accept(Token.END);
+					  finish(declarationPos);
+					  declarationAST = new RecursiveCompoundDeclaration(declarationAST,dAST3,declarationPos);
+					  break;
+				  }
+				  declarationAST = new RecursiveCompoundDeclaration(declarationAST,dAST3,declarationPos);
+				}
             }
             break;
             

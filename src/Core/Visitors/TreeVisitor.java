@@ -213,8 +213,8 @@ public class TreeVisitor implements Visitor {
     }
     
     @Override
-    public Object visitRecursieCompDeclaration(RecursiveCompoundDeclaration ast, Object o) {
-        return (createUnary("Recursive Compound Declaration", ast.SPF));
+    public Object visitRecursiveCompDeclaration(RecursiveCompoundDeclaration ast, Object o) {
+        return (createBinary("Recursive Compound Declaration", ast.D1, ast.D2));
     }
     
     @Override

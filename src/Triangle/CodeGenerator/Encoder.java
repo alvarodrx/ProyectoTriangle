@@ -1074,7 +1074,7 @@ public final class Encoder implements Visitor {
     }
 
     @Override
-    public Object visitRecursieCompDeclaration(RecursiveCompoundDeclaration ast, Object o) {
+    public Object visitRecursiveCompDeclaration(RecursiveCompoundDeclaration ast, Object o) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
