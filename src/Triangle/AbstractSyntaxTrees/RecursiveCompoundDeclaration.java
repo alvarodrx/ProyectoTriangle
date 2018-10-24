@@ -13,15 +13,16 @@ import Triangle.SyntacticAnalyzer.SourcePosition;
  */
 public class RecursiveCompoundDeclaration extends Declaration {
 
-    public RecursiveCompoundDeclaration(Declaration SPF, SourcePosition thePosition) {
+    public RecursiveCompoundDeclaration(Declaration d1AST, Declaration d2AST, SourcePosition thePosition) {
         super(thePosition);
-        this.SPF = SPF;
+        D1 = d1AST;
+		D2 = d2AST;
     }
     
-    public Declaration SPF;
+    public Declaration D1, D2;;
     @Override
     public Object visit(Visitor v, Object o) {
-        return v.visitRecursieCompDeclaration(this, o);
+        return v.visitRecursiveCompDeclaration(this, o);
     }
     
     

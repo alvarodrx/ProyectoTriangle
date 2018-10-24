@@ -101,6 +101,8 @@ import Triangle.AbstractSyntaxTrees.SequentialCase;
 import Triangle.AbstractSyntaxTrees.SequentialCaseLiteral;
 import Triangle.AbstractSyntaxTrees.SingleCase;
 import Triangle.AbstractSyntaxTrees.SingleCaseLiteral;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class Checker implements Visitor {
 
@@ -546,9 +548,14 @@ public final class Checker implements Visitor {
 
 	@Override
 	public Object visitSingleCase(SingleCase ast, Object o) {
-		ast.CL.visit(this, o);
-		ast.CM.visit(this, o);
-		return null;
+		TypeDenoter eType = (TypeDenoter) ast.CL.visit(this, null);
+		if (!eType.equals((TypeDenoter)o)){
+			reporter.reportError("Expression type and Case literal don't match", "",
+                            ast.CL.position);
+			return StdEnvironment.errorType;
+		}
+		ast.CM.visit(this, null);
+		return ast.CL;
 	}
 	
 	@Override
@@ -557,15 +564,19 @@ public final class Checker implements Visitor {
 		if (!eType.equals(StdEnvironment.integerType) || !eType.equals(StdEnvironment.charType)) {
                     reporter.reportError("Integer or char expression expected here", "",
                             ast.E.position);
+					return StdEnvironment.errorType;
 		}
-		ast.C.visit(this, null);
+		
+		ast.C.visit(this, eType);     
+		
+		
 		return null;
 	}
 	
 		@Override
 	public Object visitSequentialCase(SequentialCase ast, Object o) {
-		ast.C1.visit(this, null);
-		ast.C2.visit(this, null);
+		ast.C1.visit(this, o);
+		ast.C2.visit(this, o);
 		return null;
 	}
 	
@@ -576,30 +587,18 @@ public final class Checker implements Visitor {
 	}
 	
 	public Object visitForCommand(ForCommand ast, Object o) {  //Este codigo no funciona del todo, falta ver la parte del identifier
-		Declaration binding = (Declaration) ast.I.visit(this, null);
-        if (binding == null) {
-            reportUndeclared(ast.I);
-            return StdEnvironment.errorType;
-        } else if (!(binding instanceof TypeDeclaration)) {
-            reporter.reportError("\"%\" is not a type identifier",
-                    ast.I.spelling, ast.I.position);
-            return StdEnvironment.errorType;
-        }
-		TypeDenoter eType = (TypeDenoter) ast.E1.visit(this, null);
-		if (!eType.equals(StdEnvironment.integerType)) {
-			reporter.reportError("Integer expression expected here", "", ast.E1.position);
-		}
-		eType = (TypeDenoter) ast.E2.visit(this, null);
-		if (!eType.equals(StdEnvironment.integerType)) {
-			reporter.reportError("Integer expression expected here", "", ast.E2.position);
-		}
-		
-		TypeDenoter iType = (TypeDenoter)ast.I.visit(this, null);
-		if (!iType.equals(StdEnvironment.integerType)) {
-			reporter.reportError("Integer identifier expected here", "", ast.I.position);
-		}
-		
+		idTable.openScope();
+		TypeDenoter e1Type = (TypeDenoter) ast.E1.visit(this, null);
+		Declaration dAST = new VarDeclaration(ast.I, StdEnvironment.integerType, ast.I.position);
+		TypeDenoter e2Type = (TypeDenoter) ast.E2.visit(this, null);                      
+		if (! e1Type.equals(StdEnvironment.integerType))                                 
+		  reporter.reportError("Integer expression expected here", "", ast.E1.position);
+		if (! e2Type.equals(StdEnvironment.integerType))                                 
+		  reporter.reportError("Integer expression expected here", "", ast.E2.position);
+		dAST.visit(this, null);
 		ast.C.visit(this, null);
+		idTable.closeScope();
+		
 		return null;
 	}
 	
@@ -610,6 +609,7 @@ public final class Checker implements Visitor {
 			reporter.reportError("identifier \"%\" already declared",
 					ast.I.spelling, ast.position);
 		}
+		ast.I.type = eType;
 		return null;
 	}
 	
@@ -1091,13 +1091,113 @@ public final class Checker implements Visitor {
     }
 
     @Override
-    public Object visitRecursieCompDeclaration(RecursiveCompoundDeclaration ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public Object visitRecursiveCompDeclaration(RecursiveCompoundDeclaration ast, Object o) {
+		Declaration Dec1 = ast.D2;
+		
+		if (Dec1 instanceof FuncDeclaration) {
+			idTable.enter(((Identifier) ((FuncDeclaration) Dec1).I).spelling, Dec1);
+			if (Dec1.duplicated) {
+				reporter.reportError("identifier \"%\" already declared",
+						((Identifier) ((FuncDeclaration) Dec1).I).spelling, Dec1.position);
+			}
+		} else {
+			idTable.enter(((Identifier) ((ProcDeclaration) Dec1).I).spelling, Dec1);
+			if (Dec1.duplicated) {
+				reporter.reportError("identifier \"%\" already declared",
+						((Identifier) ((ProcDeclaration) Dec1).I).spelling, Dec1.position);
+			}
+		}
+
+		Declaration Dec2 = ast.D1; 
+
+		while (Dec2 instanceof RecursiveCompoundDeclaration) {
+			Dec1 = ((RecursiveCompoundDeclaration) Dec2).D2;
+
+			if (Dec1 instanceof FuncDeclaration) {
+				idTable.enter(((Identifier) ((FuncDeclaration) Dec1).I).spelling, Dec1);
+				if (Dec1.duplicated) {
+					reporter.reportError("identifier \"%\" already declared",
+							((Identifier) ((FuncDeclaration) Dec1).I).spelling, Dec1.position);
+				}
+			} else {
+				idTable.enter(((Identifier) ((ProcDeclaration) Dec1).I).spelling, Dec1);
+				if (Dec1.duplicated) {
+					reporter.reportError("identifier \"%\" already declared",
+							((Identifier) ((ProcDeclaration) Dec1).I).spelling, Dec1.position);
+				}
+			}
+			Dec2 = ((RecursiveCompoundDeclaration) Dec2).D1;
+		}
+
+		if (Dec2 instanceof FuncDeclaration) {
+			idTable.enter(((Identifier) ((FuncDeclaration) Dec2).I).spelling, Dec2);
+			if (Dec2.duplicated) {
+				reporter.reportError("identifier \"%\" already declared",
+						((Identifier) ((FuncDeclaration) Dec2).I).spelling, Dec2.position);
+			}
+		} else {
+			idTable.enter(((Identifier) ((ProcDeclaration) Dec2).I).spelling, Dec2);
+			if (Dec2.duplicated) {
+				reporter.reportError("identifier \"%\" already declared",
+						((Identifier) ((ProcDeclaration) Dec2).I).spelling, Dec2.position);
+			}
+		}
+		Dec1 = ast.D2;
+
+		if (Dec1 instanceof FuncDeclaration) {
+			this.visitFuncDeclaration_Aux(((FuncDeclaration) Dec1), null);
+		} else {
+			this.visitProcDeclaration_Aux(((ProcDeclaration) Dec1), null);
+		}
+
+		Dec2 = ast.D1;
+
+		while (Dec2 instanceof RecursiveCompoundDeclaration) {
+			Dec1 = ((RecursiveCompoundDeclaration) Dec2).D2;
+
+			if (Dec1 instanceof FuncDeclaration) {
+				this.visitFuncDeclaration_Aux(((FuncDeclaration) Dec1), null);
+			} else {
+				this.visitProcDeclaration_Aux(((ProcDeclaration) Dec1), null);
+			}
+			Dec2 = ((RecursiveCompoundDeclaration) Dec2).D1;
+		}
+
+		if (Dec2 instanceof FuncDeclaration) {
+			this.visitFuncDeclaration_Aux(((FuncDeclaration) Dec2), null);
+		} else {
+			this.visitProcDeclaration_Aux(((ProcDeclaration) Dec2), null);
+		}
+
+		return null;
+	}
+	
+	public Object visitFuncDeclaration_Aux(FuncDeclaration ast, Object o) {
+		ast.T = (TypeDenoter) ast.T.visit(this, null);
+		idTable.openScope();
+		ast.FPS.visit(this, null);
+		TypeDenoter eType = (TypeDenoter) ast.E.visit(this, null);
+		idTable.closeScope();
+		if (!ast.T.equals(eType)) {
+			reporter.reportError("body of function \"%\" has wrong type",
+					ast.I.spelling, ast.E.position);
+		}
+		return null;
+	}
+
+	public Object visitProcDeclaration_Aux(ProcDeclaration ast, Object o) {
+		idTable.openScope();
+		ast.FPS.visit(this, null);
+		ast.C.visit(this, null);
+		idTable.closeScope();
+		return null;
+	}
 
     @Override
     public Object visitLocalCompoundDeclaration(LocalCompoundDeclaration ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ast.D1.visit(this, null);
+		ast.D2.visit(this, null);
+		return null;
     }
 
 	@Override

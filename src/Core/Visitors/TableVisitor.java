@@ -725,7 +725,7 @@ public class TableVisitor implements Visitor {
 	}
 
     @Override
-    public Object visitRecursieCompDeclaration(RecursiveCompoundDeclaration ast, Object o) {
+    public Object visitRecursiveCompDeclaration(RecursiveCompoundDeclaration ast, Object o) {
         ast.SPF.visit(this, o);
 		return (null);
     }

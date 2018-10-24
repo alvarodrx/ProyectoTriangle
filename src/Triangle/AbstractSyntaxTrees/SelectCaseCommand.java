@@ -20,7 +20,7 @@ public class SelectCaseCommand extends Command{
 	}
 	public Expression E;
 	public Case C;
-
+	
 	@Override
 	public Object visit(Visitor v, Object o) {
 		return v.visitSelectCaseCommand(this, o);

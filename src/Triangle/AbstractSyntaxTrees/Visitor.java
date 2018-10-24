@@ -55,7 +55,7 @@ public interface Visitor {
   public abstract Object visitUnaryOperatorDeclaration(UnaryOperatorDeclaration ast, Object o);
   public abstract Object visitVarDeclaration(VarDeclaration ast, Object o);
   public abstract Object visitSequentialProcFunc(SequentialProcFunc ast, Object o);
-  public abstract Object visitRecursieCompDeclaration(RecursiveCompoundDeclaration ast, Object o);
+  public abstract Object visitRecursiveCompDeclaration(RecursiveCompoundDeclaration ast, Object o);
   public abstract Object visitLocalCompoundDeclaration(LocalCompoundDeclaration ast, Object o);
 
 
