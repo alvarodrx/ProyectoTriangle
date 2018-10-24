@@ -183,7 +183,7 @@ public class Parser {
 ///////////////////////////////////////////////////////////////////////////////
 // parseIntegerLiteral parses an integer-literal, and constructs
 // a leaf AST to represent it.
-	IntegerLiteral parseIntegerLiteral() throws SyntaxError {
+		IntegerLiteral parseIntegerLiteral() throws SyntaxError {
 		IntegerLiteral IL = null;
 
 		if (currentToken.kind == Token.INTLITERAL) {

@@ -604,11 +604,13 @@ public final class Checker implements Visitor {
 	
 	public Object visitInitializedVarDeclaration(InitializedVarDeclaration ast, Object o) {
 		TypeDenoter eType = (TypeDenoter) ast.E.visit(this, null);
-		idTable.enter(ast.I.spelling, ast);
-		if (ast.duplicated) {
+		Declaration dAST = new VarDeclaration(ast.I, eType, ast.I.position);
+		idTable.enter(ast.I.spelling, dAST);
+		if (dAST.duplicated) {
 			reporter.reportError("identifier \"%\" already declared",
 					ast.I.spelling, ast.position);
 		}
+		dAST.visit(this, null);
 		ast.I.type = eType;
 		return null;
 	}

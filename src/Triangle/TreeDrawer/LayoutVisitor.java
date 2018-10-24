@@ -225,7 +225,7 @@ public class LayoutVisitor implements Visitor {
 
     @Override
     public Object visitRecursiveCompDeclaration(RecursiveCompoundDeclaration ast, Object o) {
-        return layoutUnary("RecurDec.", ast.SPF);
+        return layoutBinary("RecurDec.", ast.D1, ast.D2);
     }
     
      @Override
