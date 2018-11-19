@@ -1,0 +1,14 @@
+let
+const Final ~ 2;
+var Id := 1  
+in 
+repeat while Id <= Final do !mientras no se haya excedido el límite superior
+let const Id ~ Id !se re-declara Id como constante para usarlo en Com
+!esto protege a Id dentro de Com
+in
+nil
+end; !el let interno comprende únicamente Com, que llega hasta aquí 
+Id := Id + 1 !se incrementa la variable de control, Id, declarada en el primer let
+!continuar conlas repeticiones
+end
+end

@@ -1,0 +1,12 @@
+let
+var a : Integer;
+var b : Char;
+local
+var r : Char
+in
+const l ~ r
+end
+in
+a := 1;
+r := 'a'
+end

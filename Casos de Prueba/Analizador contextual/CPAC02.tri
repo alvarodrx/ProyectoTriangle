@@ -1,5 +1,5 @@
 let
-  var x : Integer;
+  var x : Char;
   var y : Char
 in
   x := 5;

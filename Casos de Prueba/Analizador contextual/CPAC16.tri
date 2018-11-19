@@ -1,0 +1,8 @@
+let
+  var x : Integer
+in
+  x := 1;
+  repeat for x from 1 to 5 do
+    x := x + 1
+  end
+end

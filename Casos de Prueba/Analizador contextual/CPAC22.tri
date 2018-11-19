@@ -1,0 +1,13 @@
+let
+var x : Integer
+in
+x := 1;
+select x from
+case 1 then
+    x := x + 1
+case 2 | 3 then
+    x := x + 1
+case 'a' then
+    x := x + 1
+end
+end

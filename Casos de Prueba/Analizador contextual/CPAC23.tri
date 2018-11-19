@@ -1,0 +1,6 @@
+let
+proc ident(var x : Integer, var y : Char) ~ 
+x:=x+1
+in
+nil
+end

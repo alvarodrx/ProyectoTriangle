@@ -1,0 +1,9 @@
+let
+  var x : Integer
+in
+  x := 1;
+  repeat do
+    x := x + 1
+  until (x < 10)
+  end
+end

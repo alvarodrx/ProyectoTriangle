@@ -29,5 +29,9 @@ public class IdEntry {
     this.level = level;
     this.previous = previous;
   }
+  
+  public void setPrevious(IdEntry i){
+	  this.previous = i;
+  }
 
 }

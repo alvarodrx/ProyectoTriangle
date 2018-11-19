@@ -1,0 +1,15 @@
+let
+var z : Integer;
+var a : Integer;
+var b : Char;
+recursive
+func ident2(x : Integer, y : Char) : Integer ~ 
+x
+|
+func ident(x : Integer, y : Char) : Integer ~ 
+ident2(x, y)
+in
+a := 1;
+b := 'A';
+z:=ident2(a,b)
+end

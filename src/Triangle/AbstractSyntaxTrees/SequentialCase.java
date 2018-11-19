@@ -25,4 +25,6 @@ public class SequentialCase extends Case {
   }
 
   public Case C1, C2;
+  
+  
 }

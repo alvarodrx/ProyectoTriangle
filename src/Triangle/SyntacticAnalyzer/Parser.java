@@ -904,7 +904,6 @@ public class Parser {
                 TypeDenoter tAST = parseTypeDenoter();
                 accept(Token.IS);
                 Expression eAST = parseExpression();
-				accept(Token.END);
                 finish(declarationPos);
                 declarationAST = new FuncDeclaration(iAST, fAST, tAST, eAST, declarationPos);                
             }
