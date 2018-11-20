@@ -617,8 +617,10 @@ public final class Checker implements Visitor {
 
 	public Object visitInitializedVarDeclaration(InitializedVarDeclaration ast, Object o) {
 		TypeDenoter eType = (TypeDenoter) ast.E.visit(this, null);
+		ast.E.type = eType;
 		Declaration dAST = new VarDeclaration(ast.I, eType, ast.I.position);
 		dAST.visit(this, null);
+		ast.I.decl = dAST;
 		Vname vAST = new SimpleVname(ast.I, ast.I.position);
 		AssignCommand asAST = new AssignCommand(vAST, ast.E, ast.position);
 		asAST.visit(this, null);

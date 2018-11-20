@@ -1,0 +1,9 @@
+let
+  var x : Integer
+in
+  x := 1;
+  repeat while (x < 10) do
+    putint(x);
+    x := x + 1
+  end
+end

@@ -312,38 +312,9 @@ public class Parser {
 			break;
                         
             case Token.IF:{
-                acceptIt();
-                Expression eAST = parseExpression();
-                accept(Token.THEN);
-	            Command cAST = parseCommand();                
-                if(currentToken.kind == Token.ELSIF)
-                {
-                    acceptIt();
-                    Expression e1AST = parseExpression();
-                    accept(Token.THEN);
-                    commandAST = parseCommand(); 
-                    finish(commandPos);
-                    commandAST = new ElsifCommand(e1AST, commandAST, commandPos);
-					while(currentToken.kind == Token.ELSIF)
-					{
-						acceptIt();
-						Expression e1AST_1 = parseExpression();
-						accept(Token.THEN);
-						Command c1AST_1 = parseCommand(); 
-						finish(commandPos);
-						Command elsifAST = new ElsifCommand(e1AST_1, c1AST_1, commandPos);
-						commandAST = new SequentialElsifCommand(commandAST, elsifAST, commandPos);
-					}
-                }                
-                accept(Token.ELSE);	
-                Command c2AST = parseCommand();
-	            finish(commandPos);	
+                commandAST = parseIfCommand();				
 				accept(Token.END);
-				if(commandAST == null){
-					commandAST = new IfCommand(eAST, cAST, c2AST, commandPos);
-				}
-				else commandAST = new IfCommand(eAST, cAST, new SequentialElsifCommand(commandAST, c2AST, commandPos), commandPos);         
-				
+				finish(commandPos);
             }
 			break;
 			
@@ -449,6 +420,40 @@ public class Parser {
 		return commandAST;
 	}
 	
+	Command parseIfCommand() throws SyntaxError { //
+		Command commandAST = null; // in case there's a syntactic error
+
+		SourcePosition commandPos = new SourcePosition();
+		start(commandPos);
+		
+		acceptIt();
+		Expression eAST = parseExpression();
+		accept(Token.THEN);
+		Command cAST = parseCommand();
+		Command cAST2 = null;
+		finish(commandPos);
+		switch (currentToken.kind) {
+			case Token.ELSIF:
+				{
+					cAST2 = parseIfCommand();
+					finish(commandPos);
+					break;
+				}
+			case Token.ELSE:
+				{
+					acceptIt();
+					cAST2 = parseCommand();
+					finish(commandPos);
+					break;
+				}
+			default:
+				syntacticError("\"%\" cannot start a command",
+						currentToken.spelling);
+				break;
+		}
+		commandAST = new IfCommand(eAST, cAST, cAST2, commandPos);
+		return commandAST;
+	}
 	
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -542,6 +547,7 @@ public class Parser {
 		return cLitAST;
 	}
 
+	
 
 
 ///////////////////////////////////////////////////////////////////////////////
