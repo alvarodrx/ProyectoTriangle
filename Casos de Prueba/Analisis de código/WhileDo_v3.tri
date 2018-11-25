@@ -1,0 +1,11 @@
+let
+	const y ~ 2;
+  var x := 2
+in
+  
+  repeat while (x < 10) do
+    putint(x);
+    x := x + 1;
+    nil
+  end
+end

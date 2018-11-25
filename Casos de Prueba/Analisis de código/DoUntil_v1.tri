@@ -1,0 +1,13 @@
+let
+  var x := 15;
+  var y : Integer
+in
+  y:=1;
+  repeat do
+    putint(x);
+    puteol();
+    x := x - 1;
+    nil
+  until (x < 10)
+  end
+end

@@ -1,0 +1,13 @@
+let
+  var y : array 5 of Integer;
+  var x := 0
+in
+  
+  repeat while (x < 5) do
+    !putint(x);
+    y[x] := x;
+    putint(y[x]);
+    x := x + 1;
+    nil
+  end
+end

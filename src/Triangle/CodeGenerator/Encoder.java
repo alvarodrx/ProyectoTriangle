@@ -13,15 +13,8 @@
  */
 package Triangle.CodeGenerator;
 
-import java.io.DataOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import TAM.Instruction;
 import TAM.Machine;
-import Triangle.ErrorReporter;
-import Triangle.StdEnvironment;
 import Triangle.AbstractSyntaxTrees.AST;
 import Triangle.AbstractSyntaxTrees.AnyTypeDenoter;
 import Triangle.AbstractSyntaxTrees.ArrayExpression;
@@ -42,18 +35,21 @@ import Triangle.AbstractSyntaxTrees.Declaration;
 import Triangle.AbstractSyntaxTrees.DoUntilCommand;
 import Triangle.AbstractSyntaxTrees.DoWhileCommand;
 import Triangle.AbstractSyntaxTrees.DotVname;
+import Triangle.AbstractSyntaxTrees.ElseCase;
 import Triangle.AbstractSyntaxTrees.ElsifCommand;
 import Triangle.AbstractSyntaxTrees.EmptyActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.EmptyCommand;
 import Triangle.AbstractSyntaxTrees.EmptyExpression;
 import Triangle.AbstractSyntaxTrees.EmptyFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.ErrorTypeDenoter;
+import Triangle.AbstractSyntaxTrees.ForCommand;
 import Triangle.AbstractSyntaxTrees.FuncActualParameter;
 import Triangle.AbstractSyntaxTrees.FuncDeclaration;
 import Triangle.AbstractSyntaxTrees.FuncFormalParameter;
 import Triangle.AbstractSyntaxTrees.Identifier;
 import Triangle.AbstractSyntaxTrees.IfCommand;
 import Triangle.AbstractSyntaxTrees.IfExpression;
+import Triangle.AbstractSyntaxTrees.InitializedVarDeclaration;
 import Triangle.AbstractSyntaxTrees.IntTypeDenoter;
 import Triangle.AbstractSyntaxTrees.IntegerExpression;
 import Triangle.AbstractSyntaxTrees.IntegerLiteral;
@@ -73,6 +69,9 @@ import Triangle.AbstractSyntaxTrees.Program;
 import Triangle.AbstractSyntaxTrees.RecordExpression;
 import Triangle.AbstractSyntaxTrees.RecordTypeDenoter;
 import Triangle.AbstractSyntaxTrees.RecursiveCompoundDeclaration;
+import Triangle.AbstractSyntaxTrees.SelectCaseCommand;
+import Triangle.AbstractSyntaxTrees.SequentialCase;
+import Triangle.AbstractSyntaxTrees.SequentialCaseLiteral;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.SequentialElsifCommand;
@@ -81,6 +80,8 @@ import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleArrayAggregate;
+import Triangle.AbstractSyntaxTrees.SingleCase;
+import Triangle.AbstractSyntaxTrees.SingleCaseLiteral;
 import Triangle.AbstractSyntaxTrees.SingleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
@@ -96,14 +97,12 @@ import Triangle.AbstractSyntaxTrees.Visitor;
 import Triangle.AbstractSyntaxTrees.Vname;
 import Triangle.AbstractSyntaxTrees.VnameExpression;
 import Triangle.AbstractSyntaxTrees.WhileCommand;
-import Triangle.AbstractSyntaxTrees.ElseCase;
-import Triangle.AbstractSyntaxTrees.ForCommand;
-import Triangle.AbstractSyntaxTrees.InitializedVarDeclaration;
-import Triangle.AbstractSyntaxTrees.SelectCaseCommand;
-import Triangle.AbstractSyntaxTrees.SequentialCase;
-import Triangle.AbstractSyntaxTrees.SequentialCaseLiteral;
-import Triangle.AbstractSyntaxTrees.SingleCase;
-import Triangle.AbstractSyntaxTrees.SingleCaseLiteral;
+import Triangle.ErrorReporter;
+import Triangle.StdEnvironment;
+import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public final class Encoder implements Visitor {
 
@@ -142,16 +141,17 @@ public final class Encoder implements Visitor {
 		patch(jumpAddr, nextInstrAddr);
 		return null;
 	}
+
 	public Object visitSequentialElsifCommand(SequentialElsifCommand ast, Object o) {
 		ast.C1.visit(this, o);
 		ast.C2.visit(this, o);
 		return null;
 	}
-	
+
 	public Object visitElsifCommand(ElsifCommand ast, Object o) {
 		Frame frame = (Frame) o;
 		int jumpifAddr, jumpAddr;
-		
+
 		Integer valSize = (Integer) ast.E.visit(this, frame);
 		jumpifAddr = nextInstrAddr;
 		emit(Machine.JUMPIFop, Machine.falseRep, Machine.CBr, 0);
@@ -175,8 +175,6 @@ public final class Encoder implements Visitor {
 		ast.C2.visit(this, o);
 		return null;
 	}
-
-
 
 	public Object visitWhileCommand(WhileCommand ast, Object o) {
 		Frame frame = (Frame) o;
@@ -202,7 +200,7 @@ public final class Encoder implements Visitor {
 		ast.C.visit(this, frame);
 		patch(jumpAddr, nextInstrAddr);
 		ast.E.visit(this, frame);
-		emit(Machine.JUMPIFop, Machine.trueRep, Machine.CBr, loopAddr);
+		emit(Machine.JUMPIFop, Machine.falseRep, Machine.CBr, loopAddr);
 		return null;
 	}
 
@@ -213,8 +211,8 @@ public final class Encoder implements Visitor {
 		jumpAddr = nextInstrAddr;
 		emit(Machine.JUMPop, 0, Machine.CBr, 0);
 		loopAddr = nextInstrAddr;
-		ast.C.visit(this, frame);
 		patch(jumpAddr, nextInstrAddr);
+		ast.C.visit(this, frame);
 		ast.E.visit(this, frame);
 		emit(Machine.JUMPIFop, Machine.trueRep, Machine.CBr, loopAddr);
 		return null;
@@ -227,10 +225,10 @@ public final class Encoder implements Visitor {
 		jumpAddr = nextInstrAddr;
 		emit(Machine.JUMPop, 0, Machine.CBr, 0);
 		loopAddr = nextInstrAddr;
-		ast.C.visit(this, frame);
 		patch(jumpAddr, nextInstrAddr);
+		ast.C.visit(this, frame);
 		ast.E.visit(this, frame);
-		emit(Machine.JUMPIFop, Machine.trueRep, Machine.CBr, loopAddr);
+		emit(Machine.JUMPIFop, Machine.falseRep, Machine.CBr, loopAddr);
 		return null;
 	}
 
@@ -773,6 +771,7 @@ public final class Encoder implements Visitor {
 		} else {
 			// v-name is indexed by a proper expression, not a literal
 			if (ast.indexed) {
+				System.out.println("asdad1");
 				frame.size = frame.size + Machine.integerSize;
 			}
 			indexSize = ((Integer) ast.E.visit(this, frame)).intValue();
@@ -1112,19 +1111,51 @@ public final class Encoder implements Visitor {
 	}
 
 	@Override
-	public Object visitForCommand(ForCommand aThis, Object o) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public Object visitForCommand(ForCommand ast, Object o) {
+		Frame frame = (Frame) o;
+
+		IntegerLiteral IL = ((IntegerExpression) ast.E2).IL;
+		ast.entity = new KnownValue(Machine.integerSize,
+				Integer.parseInt(IL.spelling));
+
+		int extraSize = ((Integer) ast.I.decl.visit(this, frame)).intValue();
+		emit(Machine.PUSHop, 0, 0, extraSize);
+		ast.entity = new KnownAddress(Machine.addressSize, frame.level, frame.size);
+		writeTableDetails(ast);
+
+		Vname vAST = new SimpleVname(ast.I, ast.I.position);
+		int valSize = ((Integer) ast.E1.visit(this, frame)).intValue();
+		encodeStore(vAST, new Frame(frame, valSize),
+				valSize);
+
+		int jumpAddr, loopAddr;
+		jumpAddr = nextInstrAddr;
+		emit(Machine.JUMPop, 0, Machine.CBr, 0);
+		loopAddr = nextInstrAddr;
+		ast.C.visit(this, frame);
+		patch(jumpAddr, nextInstrAddr);
+		ast.E2.visit(this, frame);
+		emit(Machine.JUMPIFop, Machine.trueRep, Machine.CBr, loopAddr);
+		return null;
 	}
 
 	@Override
 	public Object visitInitializedVarDeclaration(InitializedVarDeclaration ast, Object o) {
 
 		Frame frame = (Frame) o;
-		Integer extraSize = (Integer) ast.I.decl.visit(this, o);
-		
+		int extraSize = ((Integer) ast.I.decl.visit(this, frame)).intValue();
+
+		emit(Machine.PUSHop, 0, 0, extraSize);
+		ast.entity = new KnownAddress(Machine.addressSize, frame.level, frame.size);
+
+		writeTableDetails(ast);
+
 		Vname vAST = new SimpleVname(ast.I, ast.I.position);
-		AssignCommand asAST = new AssignCommand(vAST, ast.E, ast.position);
-		asAST.visit(this, o);
+
+		int valSize = ((Integer) ast.E.visit(this, frame)).intValue();
+		System.out.println("" + valSize);
+		encodeStore(vAST, new Frame(frame, valSize),
+				valSize);
 
 		return extraSize;
 
@@ -1132,7 +1163,16 @@ public final class Encoder implements Visitor {
 
 	@Override
 	public Object visitRangeArrayTypeDenoter(ArrayTypeDenoter ast, Object o) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		int typeSize;
+		if (ast.entity == null) {
+			int elemSize = ((Integer) ast.T.visit(this, null)).intValue();
+			typeSize = (Integer.parseInt(ast.IL2.spelling) - Integer.parseInt(ast.IL.spelling) + 1) * elemSize;
+			ast.entity = new TypeRepresentation(typeSize);
+			writeTableDetails(ast);
+		} else {
+			typeSize = ast.entity.size;
+		}
+		return new Integer(typeSize);
 	}
 
 }

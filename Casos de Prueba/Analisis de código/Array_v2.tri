@@ -1,0 +1,15 @@
+let
+  var y : array 3 .. 7 of Integer;
+  var x := 4;
+  var z := 3
+in
+  
+  repeat while (z < 6) do
+    y[z] := x;
+    putint(y[z]);
+    !putint(x);
+    puteol();
+    x := x + 1;
+    z := z + 1
+  end
+end

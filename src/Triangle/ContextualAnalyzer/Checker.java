@@ -1222,7 +1222,7 @@ public final class Checker implements Visitor {
 		if ((Integer.valueOf(ast.IL.spelling).intValue()) == (Integer.valueOf(ast.IL2.spelling).intValue())) {
 			reporter.reportError("arrays must not be empty", "", ast.IL.position);
 		}
-		if ((Integer.valueOf(ast.IL.spelling).intValue()) < (Integer.valueOf(ast.IL2.spelling).intValue())) {
+		if ((Integer.valueOf(ast.IL.spelling).intValue()) > (Integer.valueOf(ast.IL2.spelling).intValue())) {
 			reporter.reportError("second value of the array must be higher than first value", "", ast.IL.position);
 		}
 		return ast;

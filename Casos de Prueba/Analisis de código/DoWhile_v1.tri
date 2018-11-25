@@ -1,0 +1,11 @@
+let
+  var x := 10
+in
+  
+  repeat do
+    putint(x);
+    x := x + 1;
+    nil
+  while (x < 10)
+  end
+end

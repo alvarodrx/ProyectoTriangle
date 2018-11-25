@@ -22,6 +22,7 @@ public class ArrayTypeDenoter extends TypeDenoter {
                     SourcePosition thePosition) {
     super (thePosition);
     IL = ilAST;
+	IL2 = null;
     T = tAST;
 	rangeArray = false;
   }
